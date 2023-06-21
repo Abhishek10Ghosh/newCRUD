@@ -1,7 +1,13 @@
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { updatedata } from "./Context/ContextProvider";
 
 const Edit = () => {
+
+  const {updata, setUPdata} = useContext(updatedata);
+
+  const history = useNavigate("");
+
   const [inpval, setINP] = useState({
     name: "",
     email: "",
@@ -21,6 +27,61 @@ const Edit = () => {
         [name]: value,
       };
     });
+  };
+
+  const { id } = useParams(""); // to bring in the id
+  console.log(id);
+
+  // const [getuserdata, setUserdata] = useState([]);
+  // console.log(getuserdata);
+
+  const getdata = async () => {
+    // using fetch api to add data to databse same as done from postman
+    const res = await fetch(`/getuser/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await res.json();
+    console.log(data);
+
+    if (res.status === 422 || !data) {
+      console.log("error");
+    } else {
+      setINP(data);
+      console.log("get data");
+    }
+  };
+  // whenever the page refreshes the function would be called
+  useEffect(() => {
+    getdata();
+  }, []);
+
+  const updateuser = async (e) => {
+    e.preventDefault();
+
+    const { name, email, work, add, mobile, desc, age } = inpval;
+
+    const res2 = await fetch(`/updateuser/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name, email, work, add, mobile, desc, age }),
+    });
+
+    const data2 = await res2.json();
+    console.log(data2);
+
+    if (res2.status === 422 || !data2) {
+      alert("fill all the data");
+    } else {
+      // alert("data updated");
+      setUPdata(data2);
+      history("/");
+    }
   };
   return (
     <div className="container">
@@ -121,7 +182,7 @@ const Edit = () => {
             ></textarea>
           </div>
 
-          <button type="submit" class="btn btn-primary">
+          <button onClick={updateuser} type="submit" class="btn btn-primary">
             Submit
           </button>
         </div>

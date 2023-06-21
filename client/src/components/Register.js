@@ -1,7 +1,13 @@
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useContext, useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { adddata } from "./Context/ContextProvider";
 
 const Register = () => {
+
+  const {udata,setUdata} = useContext(adddata);
+
+  const history = useNavigate("");
+
   const [inpval, setINP] = useState({
     name: "",
     email: "",
@@ -48,12 +54,14 @@ const Register = () => {
     const data = await res.json();
     console.log(data);
 
-    if(res.status === 404 || !data){
+    if (res.status === 422 || !data) {
       alert("error");
       console.log("error");
-    }else{
-      alert("Data added");
+    } else {
+      // alert("Data added");
+      setUdata(data);
       console.log("Data added");
+      history("/");
     }
   };
 

@@ -7,9 +7,10 @@ import Register from "./components/Register";
 import Edit from "./components/Edit";
 import Details from "./components/Details";
 import { Route, Routes } from "react-router-dom";
+import ContextProvider from "./components/Context/ContextProvider";
 function App() {
   return (
-    <>
+    <ContextProvider>
       <Navbar />
       <Routes>
         <Route exact path="/" Component={Home} />
@@ -17,7 +18,7 @@ function App() {
         <Route exact path="/edit/:id" Component={Edit} />
         <Route exact path="/view/:id" Component={Details} />
       </Routes>
-    </>
+    </ContextProvider>
   );
 }
 
